@@ -20,6 +20,10 @@ export const Translations = {
     'This program is freeware and may be used freely anywhere, including in broadcasts and videos.': 'This program is freeware and may be used freely anywhere, including in broadcasts and videos.',
     'Close': 'Close',
     'The result has been copied': 'The result has been copied',
+    'Copy URL': 'Copy URL',
+    'URL copied to clipboard': 'URL copied to clipboard',
+    'Failed to copy URL': 'Failed to copy URL',
+    'No names to copy': 'No names to copy',
   },
   ko: {
     'Enter names below': '이름들을 입력하세요',
@@ -42,6 +46,10 @@ export const Translations = {
     'This program is freeware and may be used freely anywhere, including in broadcasts and videos.': '이 프로그램은 프리웨어이며 방송이나 영상 등을 포함한 어떤 용도로든 자유롭게 사용하는 것이 허용되어있습니다.',
     'Close': '닫기',
     'The result has been copied': '결과가 복사되었습니다',
+    'Copy URL': '정보 백업 URL 복사',
+    'URL copied to clipboard': '정보 백업 URL이 클립보드에 복사되었습니다',
+    'Failed to copy URL': '정보 백업 URL 복사에 실패했습니다',
+    'No names to copy': '복사할 이름이 없습니다',
   },
 } as const;
 

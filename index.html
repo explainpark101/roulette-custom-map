@@ -119,9 +119,22 @@
     }
     console.log('initializing start');
 
-    const savedNames = localStorage.getItem('mbr_names');
-    if (savedNames) {
-      document.querySelector('#in_names').value = savedNames;
+    // URL query parameter에서 데이터 읽기
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlData = urlParams.get('data') || urlParams.get('names');
+    if (urlData) {
+      try {
+        const decodedData = decodeURIComponent(urlData);
+        document.querySelector('#in_names').value = decodedData;
+        getReady();
+      } catch (e) {
+        console.error('Failed to decode URL data:', e);
+      }
+    } else {
+      const savedNames = localStorage.getItem('mbr_names');
+      if (savedNames) {
+        document.querySelector('#in_names').value = savedNames;
+      }
     }
     document.querySelector('#in_names').addEventListener('input', () => {
       getReady();
@@ -160,6 +173,66 @@
 
     document.querySelector('#btnShuffle').addEventListener('click', () => {
       getReady();
+    });
+
+    document.querySelector('#btnCopyUrl').addEventListener('click', () => {
+      const names = getNames();
+      if (names.length === 0) {
+        const toast = document.createElement('div');
+        toast.classList.add('toast');
+        toast.setAttribute('data-trans', '');
+        toast.innerHTML = 'No names to copy';
+        if (window.translateElement) {
+          window.translateElement(toast);
+        }
+        document.body.appendChild(toast);
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 1200);
+        return;
+      }
+      const data = encodeURIComponent(document.querySelector('#in_names').value);
+      const currentUrl = window.location.origin + window.location.pathname;
+      const urlWithData = `${currentUrl}?data=${data}`;
+
+      const showToast = (message) => {
+        const toast = document.createElement('div');
+        toast.classList.add('toast');
+        toast.setAttribute('data-trans', '');
+        toast.innerHTML = message;
+        if (window.translateElement) {
+          window.translateElement(toast);
+        }
+        document.body.appendChild(toast);
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 1200);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(urlWithData).then(() => {
+          showToast('URL copied to clipboard');
+        }).catch((err) => {
+          console.error('Failed to copy URL:', err);
+          showToast('Failed to copy URL');
+        });
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = urlWithData;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showToast('URL copied to clipboard');
+        } catch (err) {
+          console.error('Failed to copy URL:', err);
+          showToast('Failed to copy URL');
+        }
+        document.body.removeChild(textArea);
+      }
     });
 
     document.querySelector('#btnStart').addEventListener('click', () => {
@@ -343,6 +416,9 @@
         <i class="icon megaphone"></i>
       </button>
       <div class="sep"></div>
+      <button id="btnCopyUrl">
+        <span data-trans>Copy URL</span>
+      </button>
       <button id="btnShuffle">
         <i class="icon shuffle"></i>
         <span data-trans>Shuffle</span>
